@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Button, ThemeProvider } from "react-native-elements";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Audio } from "expo-av";
 
 const SoundButton = props => {
@@ -10,35 +9,64 @@ const SoundButton = props => {
     setPlaying(true);
     //Play sound
 
-    const soundObject = new Audio.Sound();
+    let soundObject = new Audio.Sound();
     try {
-      await soundObject.loadAsync(require("../../assets/sound/test.m4a"));
+      await soundObject.loadAsync(props.soundBite);
       await soundObject.playAsync();
+      soundObject.setOnPlaybackStatusUpdate(async (status)=>{
+        if(status.didJustFinish){
+          await soundObject.unloadAsync();
+          setPlaying(false);
+          console.log('a');
+        }
+      })
       // Your sound is playing!
+      // await setTimeout(async ()=>{soundObject.stopAsync()}, 6000);
     } catch (error) {
       // An error occurred!
     }
+  
   };
 
-  return (
-    <ThemeProvider>
-      <Button
-        buttonStyle={styles.buttonStyle}
-        title={props.title}
-        type="outline"
-        loading={isPlaying}
+  if(isPlaying){
+    return(
+      <TouchableOpacity
+        style={styles.buttonStyle}
         onPress={playSound}
-      />
-    </ThemeProvider>
+      > 
+      <ActivityIndicator />
+        <Text style={styles.textStyle}>{props.title}</Text>
+      </TouchableOpacity>
+    );
+  }
+  return (
+      <TouchableOpacity
+        style={styles.buttonStyle}
+        onPress={playSound}
+      > 
+        <Text style={styles.textStyle}>{props.title}</Text>
+      </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   buttonStyle: {
-    marginHorizontal: 20,
+    marginHorizontal: 10,
     marginVertical: 20,
-    width: 50,
-    height: 50
+    width: 100,
+    height: 100,
+    backgroundColor: '#98ffcc',
+    borderRadius: 10,
+    elevation: 10,
+    justifyContent: 'flex-end',
+    borderColor: 'black',
+    borderWidth: 2
+  },
+  textStyle: {
+    textAlign: 'center',
+    marginBottom: 5,
+    color: 'black',
+    fontFamily: 'monospace'
   }
 });
 
