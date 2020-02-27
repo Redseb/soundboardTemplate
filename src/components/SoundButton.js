@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator
+} from "react-native";
 import { Audio } from "expo-av";
 
 const SoundButton = props => {
@@ -13,39 +19,31 @@ const SoundButton = props => {
     try {
       await soundObject.loadAsync(props.soundBite);
       await soundObject.playAsync();
-      soundObject.setOnPlaybackStatusUpdate(async (status)=>{
-        if(status.didJustFinish){
+      soundObject.setOnPlaybackStatusUpdate(async status => {
+        if (status.didJustFinish) {
           await soundObject.unloadAsync();
           setPlaying(false);
-          console.log('a');
         }
-      })
+      });
       // Your sound is playing!
       // await setTimeout(async ()=>{soundObject.stopAsync()}, 6000);
     } catch (error) {
       // An error occurred!
     }
-  
   };
 
-  if(isPlaying){
-    return(
-      <TouchableOpacity
-        style={styles.buttonStyle}
-        onPress={playSound}
-      > 
-      <ActivityIndicator />
+  if (isPlaying) {
+    return (
+      <TouchableOpacity style={styles.buttonStyle} onPress={playSound}>
+        <ActivityIndicator />
         <Text style={styles.textStyle}>{props.title}</Text>
       </TouchableOpacity>
     );
   }
   return (
-      <TouchableOpacity
-        style={styles.buttonStyle}
-        onPress={playSound}
-      > 
-        <Text style={styles.textStyle}>{props.title}</Text>
-      </TouchableOpacity>
+    <TouchableOpacity style={styles.buttonStyle} onPress={playSound}>
+      <Text style={styles.textStyle}>{props.title}</Text>
+    </TouchableOpacity>
   );
 };
 
@@ -55,18 +53,18 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     width: 100,
     height: 100,
-    backgroundColor: '#98ffcc',
+    backgroundColor: "#98ffcc",
     borderRadius: 10,
     elevation: 10,
-    justifyContent: 'flex-end',
-    borderColor: 'black',
+    justifyContent: "flex-end",
+    borderColor: "black",
     borderWidth: 2
   },
   textStyle: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 5,
-    color: 'black',
-    fontFamily: 'monospace'
+    color: "black",
+    fontFamily: "monospace"
   }
 });
 
